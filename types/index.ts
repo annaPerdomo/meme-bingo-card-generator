@@ -11,4 +11,4 @@ export interface Category {
   subreddit: string;
 }
 
-export type GridSize = "3x3" | "4x4";
+export type GridSize = "3x3" | "4x4" | "5x5";
