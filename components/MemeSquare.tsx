@@ -2,7 +2,7 @@
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import CasinoIcon from "@mui/icons-material/Casino";
 import { Meme } from "@/types";
 
@@ -12,10 +12,10 @@ interface MemeSquareProps {
   interactive?: boolean;
 }
 
-function SquareContent({
+export default function MemeSquare({
   meme,
   onClick,
-  interactive,
+  interactive = true,
 }: MemeSquareProps) {
   return (
     <Box
@@ -31,12 +31,9 @@ function SquareContent({
           "&:hover": {
             zIndex: 2,
             boxShadow: "0 0 20px rgba(124, 77, 255, 0.25)",
-            "& .meme-overlay": {
+            "& .post-link": {
               opacity: 1,
-            },
-            "& .meme-title-bar": {
-              opacity: 1,
-              transform: "translateY(0)",
+              transform: "scale(1)",
             },
             "& .reroll-badge": {
               opacity: 1,
@@ -66,49 +63,37 @@ function SquareContent({
       {interactive && (
         <>
           <Box
-            className="meme-overlay"
+            className="post-link"
+            component="a"
+            href={`https://reddit.com/comments/${meme.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
             sx={{
               position: "absolute",
-              inset: 0,
-              background:
-                "linear-gradient(180deg, rgba(8, 11, 24, 0) 40%, rgba(8, 11, 24, 0.75) 100%)",
-              opacity: 0,
-              transition: "opacity 0.25s ease",
-              pointerEvents: "none",
-            }}
-          />
-
-          <Box
-            className="meme-title-bar"
-            sx={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              px: { xs: 0.75, sm: 1 },
-              py: { xs: 0.5, sm: 0.75 },
-              opacity: 0,
-              transform: "translateY(4px)",
-              transition: "all 0.25s ease",
-              pointerEvents: "none",
+              bottom: { xs: 4, sm: 6 },
+              right: { xs: 4, sm: 6 },
               zIndex: 3,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: { xs: 22, sm: 26 },
+              height: { xs: 22, sm: 26 },
+              borderRadius: 1,
+              bgcolor: "rgba(0, 0, 0, 0.6)",
+              backdropFilter: "blur(4px)",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              opacity: 0,
+              transform: "scale(0.8)",
+              transition: "all 0.2s ease",
+              color: "#ffffff",
+              textDecoration: "none",
+              "&:hover": {
+                bgcolor: "rgba(124, 77, 255, 0.85)",
+              },
             }}
           >
-            <Typography
-              sx={{
-                color: "#ffffff",
-                fontSize: { xs: "0.55rem", sm: "0.65rem", md: "0.72rem" },
-                lineHeight: 1.3,
-                fontWeight: 500,
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-                textShadow: "0 1px 3px rgba(0,0,0,0.5)",
-              }}
-            >
-              {meme.title}
-            </Typography>
+            <OpenInNewIcon sx={{ fontSize: { xs: 12, sm: 14 } }} />
           </Box>
 
           <Box
@@ -150,25 +135,5 @@ function SquareContent({
         </>
       )}
     </Box>
-  );
-}
-
-export default function MemeSquare({
-  meme,
-  onClick,
-  interactive = true,
-}: MemeSquareProps) {
-  if (!interactive) {
-    return (
-      <SquareContent meme={meme} onClick={onClick} interactive={false} />
-    );
-  }
-
-  return (
-    <Tooltip title={meme.title} placement="top" enterDelay={600}>
-      <Box>
-        <SquareContent meme={meme} onClick={onClick} interactive />
-      </Box>
-    </Tooltip>
   );
 }
