@@ -294,6 +294,7 @@ export default function Home() {
   const [printVariations, setPrintVariations] = useState<Meme[][]>([]);
   const [freeSpace, setFreeSpace] = useState(true);
   const [includeGifs, setIncludeGifs] = useState(true);
+  const [allowNsfw, setAllowNsfw] = useState(false);
 
   const totalCells = gridSize === "3x3" ? 9 : gridSize === "4x4" ? 16 : 25;
   const memeCount = totalCells - (freeSpace && gridSize !== "4x4" ? 1 : 0);
@@ -311,7 +312,7 @@ export default function Home() {
     setError(null);
 
     try {
-      const response = await fetch(`/api/memes/${category}`);
+      const response = await fetch(`/api/memes/${category}${allowNsfw ? "?nsfw=1" : ""}`);
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error || "Failed to fetch memes");
@@ -340,7 +341,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [category, memeCount, includeGifs]);
+  }, [category, memeCount, includeGifs, allowNsfw]);
 
   const rerollMeme = useCallback(
     (index: number) => {
@@ -445,6 +446,8 @@ export default function Home() {
         onFreeSpaceChange={setFreeSpace}
         includeGifs={includeGifs}
         onIncludeGifsChange={setIncludeGifs}
+        allowNsfw={allowNsfw}
+        onAllowNsfwChange={setAllowNsfw}
         variations={variations}
         onVariationsChange={setVariations}
         onGenerate={generateCard}

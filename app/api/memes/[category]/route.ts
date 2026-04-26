@@ -3,7 +3,7 @@ import { getMemes } from "@/lib/meme-sources";
 import { getCategoryBySlug } from "@/lib/categories";
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ category: string }> },
 ) {
   const { category } = await params;
@@ -16,7 +16,8 @@ export async function GET(
     );
   }
 
-  const memes = await getMemes(categoryConfig.slug, categoryConfig.subreddit);
+  const allowNsfw = request.nextUrl.searchParams.get("nsfw") === "1";
+  const memes = await getMemes(categoryConfig.slug, categoryConfig.subreddit, allowNsfw);
 
   if (memes.length === 0) {
     return NextResponse.json(

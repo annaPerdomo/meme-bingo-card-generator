@@ -29,6 +29,8 @@ interface ControlPanelProps {
   onFreeSpaceChange: (val: boolean) => void;
   includeGifs: boolean;
   onIncludeGifsChange: (val: boolean) => void;
+  allowNsfw: boolean;
+  onAllowNsfwChange: (val: boolean) => void;
   variations: number;
   onVariationsChange: (num: number) => void;
   onGenerate: () => void;
@@ -55,6 +57,8 @@ export default function ControlPanel({
   onFreeSpaceChange,
   includeGifs,
   onIncludeGifsChange,
+  allowNsfw,
+  onAllowNsfwChange,
   variations,
   onVariationsChange,
   onGenerate,
@@ -185,6 +189,22 @@ export default function ControlPanel({
         label={
           <Typography variant="body2" sx={{ color: "text.secondary" }}>
             Include GIFs
+          </Typography>
+        }
+        sx={{ mx: 0 }}
+      />
+
+      <FormControlLabel
+        control={
+          <Switch
+            checked={allowNsfw}
+            onChange={(e) => onAllowNsfwChange(e.target.checked)}
+            size="small"
+          />
+        }
+        label={
+          <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            Allow NSFW
           </Typography>
         }
         sx={{ mx: 0 }}

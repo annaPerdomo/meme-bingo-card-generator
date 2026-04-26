@@ -29,7 +29,7 @@ interface RedditPost {
   };
 }
 
-async function fetchFromReddit(subreddit: string): Promise<Meme[]> {
+async function fetchFromReddit(subreddit: string, allowNsfw = false): Promise<Meme[]> {
   const response = await fetch(
     `https://www.reddit.com/r/${subreddit}/hot.json?limit=100`,
     {
@@ -52,7 +52,7 @@ async function fetchFromReddit(subreddit: string): Promise<Meme[]> {
       const d = post.data;
       return (
         !d.is_video &&
-        !d.over_18 &&
+        (allowNsfw || !d.over_18) &&
         !d.is_gallery &&
         (d.post_hint === "image" || isImageUrl(d.url))
       );
@@ -139,14 +139,16 @@ async function cacheMemes(category: string, memes: Meme[]): Promise<void> {
 export async function getMemes(
   category: string,
   subreddit: string,
+  allowNsfw = false,
 ): Promise<Meme[]> {
-  const cached = await getCachedMemes(category);
+  const cacheKey = allowNsfw ? `${category}:nsfw` : category;
+  const cached = await getCachedMemes(cacheKey);
   if (cached) return cached;
 
   try {
-    const memes = await fetchFromReddit(subreddit);
+    const memes = await fetchFromReddit(subreddit, allowNsfw);
     if (memes.length > 0) {
-      await cacheMemes(category, memes);
+      await cacheMemes(cacheKey, memes);
       return memes;
     }
   } catch (error) {
