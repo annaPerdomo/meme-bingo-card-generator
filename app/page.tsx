@@ -293,6 +293,7 @@ export default function Home() {
   const [isPrinting, setIsPrinting] = useState(false);
   const [printVariations, setPrintVariations] = useState<Meme[][]>([]);
   const [freeSpace, setFreeSpace] = useState(true);
+  const [includeGifs, setIncludeGifs] = useState(true);
 
   const totalCells = gridSize === "3x3" ? 9 : gridSize === "4x4" ? 16 : 25;
   const memeCount = totalCells - (freeSpace && gridSize !== "4x4" ? 1 : 0);
@@ -316,7 +317,13 @@ export default function Home() {
         throw new Error(data.error || "Failed to fetch memes");
       }
 
-      const memes: Meme[] = await response.json();
+      let memes: Meme[] = await response.json();
+
+      if (!includeGifs) {
+        memes = memes.filter(
+          (m) => !m.url.toLowerCase().endsWith(".gif"),
+        );
+      }
 
       if (memes.length < memeCount) {
         throw new Error(
@@ -333,7 +340,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [category, memeCount]);
+  }, [category, memeCount, includeGifs]);
 
   const rerollMeme = useCallback(
     (index: number) => {
@@ -436,6 +443,8 @@ export default function Home() {
         onGridSizeChange={handleGridSizeChange}
         freeSpace={freeSpace}
         onFreeSpaceChange={setFreeSpace}
+        includeGifs={includeGifs}
+        onIncludeGifsChange={setIncludeGifs}
         variations={variations}
         onVariationsChange={setVariations}
         onGenerate={generateCard}

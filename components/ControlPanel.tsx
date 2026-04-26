@@ -27,6 +27,8 @@ interface ControlPanelProps {
   onGridSizeChange: (size: GridSize) => void;
   freeSpace: boolean;
   onFreeSpaceChange: (val: boolean) => void;
+  includeGifs: boolean;
+  onIncludeGifsChange: (val: boolean) => void;
   variations: number;
   onVariationsChange: (num: number) => void;
   onGenerate: () => void;
@@ -51,6 +53,8 @@ export default function ControlPanel({
   onGridSizeChange,
   freeSpace,
   onFreeSpaceChange,
+  includeGifs,
+  onIncludeGifsChange,
   variations,
   onVariationsChange,
   onGenerate,
@@ -165,6 +169,22 @@ export default function ControlPanel({
         label={
           <Typography variant="body2" sx={{ color: gridSize === "4x4" ? "text.disabled" : "text.secondary" }}>
             Free space
+          </Typography>
+        }
+        sx={{ mx: 0 }}
+      />
+
+      <FormControlLabel
+        control={
+          <Switch
+            checked={includeGifs}
+            onChange={(e) => onIncludeGifsChange(e.target.checked)}
+            size="small"
+          />
+        }
+        label={
+          <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            Include GIFs
           </Typography>
         }
         sx={{ mx: 0 }}
