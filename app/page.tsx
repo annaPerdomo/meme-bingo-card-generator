@@ -85,12 +85,32 @@ function AnimatedDemoCard() {
       .catch(() => {});
   }, []);
 
+  const swapTile = useCallback((slotIdx: number) => {
+    if (poolRef.current.length === 0) return;
+    const poolPick = Math.floor(Math.random() * poolRef.current.length);
+    const incoming = poolRef.current[poolPick];
+    const img = new Image();
+    img.src = incoming.url;
+
+    setTiles((prev) => {
+      if (prev.length === 0) return prev;
+      const updated = [...prev];
+      poolRef.current[poolPick] = prev[slotIdx];
+      updated[slotIdx] = incoming;
+      return updated;
+    });
+  }, []);
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (!loadedRef.current || poolRef.current.length === 0) return;
 
       const targetIdx = Math.floor(Math.random() * DEMO_MEME_SLOTS);
       const poolPick = Math.floor(Math.random() * poolRef.current.length);
+      const incoming = poolRef.current[poolPick];
+
+      const img = new Image();
+      img.src = incoming.url;
 
       setExitingIdx(targetIdx);
 
@@ -98,12 +118,7 @@ function AnimatedDemoCard() {
         setTiles((prev) => {
           if (prev.length === 0) return prev;
           const updated = [...prev];
-          const incoming = poolRef.current[poolPick];
-          poolRef.current = [
-            ...poolRef.current.slice(0, poolPick),
-            updated[targetIdx],
-            ...poolRef.current.slice(poolPick + 1),
-          ];
+          poolRef.current[poolPick] = prev[targetIdx];
           updated[targetIdx] = incoming;
           return updated;
         });
@@ -114,7 +129,7 @@ function AnimatedDemoCard() {
     return () => clearInterval(interval);
   }, []);
 
-  const tileSize = { xs: 72, sm: 88 };
+  const tileSize = { xs: 90, sm: 120, md: 150 };
   let memeSlot = 0;
 
   return (
@@ -122,8 +137,8 @@ function AnimatedDemoCard() {
       sx={{
         display: "inline-grid",
         gridTemplateColumns: `repeat(${DEMO_COLS}, 1fr)`,
-        gap: "3px",
-        p: "3px",
+        gap: { xs: "3px", sm: "4px", md: "5px" },
+        p: { xs: "3px", sm: "4px", md: "5px" },
         borderRadius: 2,
         overflow: "hidden",
         bgcolor: "rgba(124, 77, 255, 0.15)",
@@ -148,12 +163,12 @@ function AnimatedDemoCard() {
                 borderRadius: 1,
               }}
             >
-              <Typography sx={{ fontSize: { xs: "1.4rem", sm: "1.7rem" }, lineHeight: 1 }}>
+              <Typography sx={{ fontSize: { xs: "1.6rem", sm: "2rem", md: "2.5rem" }, lineHeight: 1 }}>
                 ✨
               </Typography>
               <Typography
                 sx={{
-                  fontSize: { xs: "0.5rem", sm: "0.58rem" },
+                  fontSize: { xs: "0.55rem", sm: "0.65rem", md: "0.75rem" },
                   fontWeight: 800,
                   color: "primary.light",
                   letterSpacing: "0.1em",
@@ -208,6 +223,7 @@ function AnimatedDemoCard() {
               component="img"
               src={tile.url}
               alt=""
+              onError={() => swapTile(slot)}
               sx={{
                 width: "100%",
                 height: "100%",
@@ -225,33 +241,49 @@ function AnimatedDemoCard() {
 function EmptyState() {
   return (
     <Box sx={{ textAlign: "center", maxWidth: 560, px: 3 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          gap: { xs: 0.5, sm: 1.5 },
-          mb: 3,
-        }}
-      >
-        {bingoLetterColors.map(({ letter, color, glow }, i) => (
-          <Typography
-            key={letter}
-            variant="h1"
-            sx={{
-              fontSize: { xs: "3.5rem", sm: "4.5rem", md: "5.5rem" },
-              lineHeight: 1,
-              color,
-              textShadow: `0 0 40px rgba(${glow}, 0.4), 0 0 80px rgba(${glow}, 0.15)`,
-              animation: `float 3s ease-in-out ${i * 0.15}s infinite`,
-              "@keyframes float": {
-                "0%, 100%": { transform: "translateY(0)" },
-                "50%": { transform: "translateY(-8px)" },
-              },
-            }}
-          >
-            {letter}
-          </Typography>
-        ))}
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: { xs: 0.5, sm: 1 }, mb: 3 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: { xs: 0.5, sm: 1.5 } }}>
+          {memeLetterColors.map(({ letter, color, glow }, i) => (
+            <Typography
+              key={`meme-${i}`}
+              variant="h1"
+              sx={{
+                fontSize: { xs: "3rem", sm: "3.8rem", md: "4.5rem" },
+                lineHeight: 1,
+                color,
+                textShadow: `0 0 40px rgba(${glow}, 0.4), 0 0 80px rgba(${glow}, 0.15)`,
+                animation: `float 3s ease-in-out ${i * 0.15}s infinite`,
+                "@keyframes float": {
+                  "0%, 100%": { transform: "translateY(0)" },
+                  "50%": { transform: "translateY(-8px)" },
+                },
+              }}
+            >
+              {letter}
+            </Typography>
+          ))}
+        </Box>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: { xs: 0.5, sm: 1.5 } }}>
+          {bingoLetterColors.map(({ letter, color, glow }, i) => (
+            <Typography
+              key={`bingo-${i}`}
+              variant="h1"
+              sx={{
+                fontSize: { xs: "3.5rem", sm: "4.5rem", md: "5.5rem" },
+                lineHeight: 1,
+                color,
+                textShadow: `0 0 40px rgba(${glow}, 0.4), 0 0 80px rgba(${glow}, 0.15)`,
+                animation: `float 3s ease-in-out ${(i + 4) * 0.15}s infinite`,
+                "@keyframes float": {
+                  "0%, 100%": { transform: "translateY(0)" },
+                  "50%": { transform: "translateY(-8px)" },
+                },
+              }}
+            >
+              {letter}
+            </Typography>
+          ))}
+        </Box>
       </Box>
 
       <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
