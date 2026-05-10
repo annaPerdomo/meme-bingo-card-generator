@@ -46,6 +46,13 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
+const memeLetterColors = [
+  { letter: "M", color: "#ff4081", glow: "255, 64, 129" },
+  { letter: "E", color: "#ffab40", glow: "255, 171, 64" },
+  { letter: "M", color: "#00e676", glow: "0, 230, 118" },
+  { letter: "E", color: "#00e5ff", glow: "0, 229, 255" },
+];
+
 const bingoLetterColors = [
   { letter: "B", color: "#7c4dff", glow: "124, 77, 255" },
   { letter: "I", color: "#ff4081", glow: "255, 64, 129" },
