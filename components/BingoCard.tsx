@@ -52,13 +52,13 @@ export default function BingoCard({
         sx={{
           display: "grid",
           gridTemplateColumns: `repeat(${columns}, 1fr)`,
-          gridTemplateRows: `auto repeat(${columns}, 1fr)`,
+          gridTemplateRows: columns === 5 ? `auto repeat(${columns}, 1fr)` : `repeat(${columns}, 1fr)`,
           gap: "2px",
           bgcolor: "rgba(124, 77, 255, 0.08)",
           p: "2px",
         }}
       >
-        {letters.map(({ letter, color, glow }) => (
+        {columns === 5 && letters.map(({ letter, color, glow }) => (
           <Box
             key={letter}
             sx={{
