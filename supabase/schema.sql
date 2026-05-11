@@ -14,14 +14,14 @@ create table if not exists memes (
 create index if not exists idx_memes_category on memes(category);
 create index if not exists idx_memes_cached_at on memes(cached_at);
 
--- Allow public read/write since memes aren't sensitive data
+-- Public can read; only the service role can insert/update (via API route)
 alter table memes enable row level security;
 
 create policy "Allow public read" on memes
   for select using (true);
 
-create policy "Allow public insert" on memes
-  for insert with check (true);
+create policy "Allow service role insert" on memes
+  for insert to service_role with check (true);
 
-create policy "Allow public update" on memes
-  for update using (true);
+create policy "Allow service role update" on memes
+  for update to service_role using (true);

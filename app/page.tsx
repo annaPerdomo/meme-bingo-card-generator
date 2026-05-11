@@ -482,7 +482,14 @@ export default function Home() {
         gridSize={gridSize}
         onGridSizeChange={handleGridSizeChange}
         freeSpace={freeSpace}
-        onFreeSpaceChange={setFreeSpace}
+        onFreeSpaceChange={(v: boolean) => {
+          setFreeSpace(v);
+          if (showCard) {
+            setShowCard(false);
+            setDisplayedMemes([]);
+            setMemePool([]);
+          }
+        }}
         includeGifs={includeGifs}
         onIncludeGifsChange={setIncludeGifs}
         allowNsfw={allowNsfw}

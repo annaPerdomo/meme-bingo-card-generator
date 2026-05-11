@@ -109,6 +109,17 @@ export default function MemeSquare({
       ref={containerRef}
       onClick={handleClick}
       onMouseDown={handleMouseDown}
+      {...(interactive && {
+        role: "button",
+        tabIndex: 0,
+        "aria-label": `Reroll meme: ${meme.title}`,
+        onKeyDown: (e: React.KeyboardEvent) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleClick();
+          }
+        },
+      })}
       sx={{
         cursor: interactive
           ? dragging
